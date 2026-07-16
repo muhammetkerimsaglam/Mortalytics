@@ -19,32 +19,10 @@ Bu proje; deterministik aktüeryal hesaplamaların gücünü, stokastik (rastsal
 
 ## 🛠️ Kullanılan Teknolojiler
 
-*   **Python 3.x**
+*   **Python**
 *   **Streamlit** (Web arayüzü ve canlı dağıtım)
 *   **Plotly** (İnteraktif ve çift eksenli grafikler)
 *   **Pandas & NumPy** (Matematiksel motor ve veri manipülasyonu)
-
----
-
-## 💻 Kurulum ve Yerelde Çalıştırma
-
-Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
-
-1.  **Depoyu klonlayın:**
-    ```bash
-    git clone [https://github.com/KULLANICI_ADINIZ/mortalytics.git](https://github.com/KULLANICI_ADINIZ/mortalytics.git)
-    cd mortalytics
-    ```
-
-2.  **Gerekli kütüphaneleri yükleyin:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Uygulamayı başlatın:**
-    ```bash
-    streamlit run app.py
-    ```
 
 ---
 
