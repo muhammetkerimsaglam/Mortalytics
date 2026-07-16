@@ -73,5 +73,3 @@ Uygulama, iskonto faktörü $v = \frac{1}{1+i}$ olmak üzere aşağıdaki formü
 Proje hakkında sorularınız, iş birliği önerileriniz veya geri bildirimleriniz için benimle LinkedIn üzerinden iletişime geçebilirsiniz!
 https://www.linkedin.com/in/muhammet-kerim-sa%C4%9Flam-69710625b/
 *   **Geliştirici:** Muhammet Kerim Sağlam
-*   **LinkedIn:** [LinkedIn Profil Linkiniz]
-*   **E-posta:** [E-posta Adresiniz]
