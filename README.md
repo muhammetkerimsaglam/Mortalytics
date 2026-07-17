@@ -56,7 +56,8 @@ Sistem, komütasyon fonksiyonlarını kullanarak aşağıdaki üç temel aktüer
     $$\ddot{a}_x = \frac{N_x}{D_x}$$
 *   **Dönem Sonu Ödemeli Adi Anüite ($a_x$):**
     $$a_x = \frac{N_{x+1}}{D_x}$$
-*   *   **n-Yıl Ertelemeli Peşin Anüite ($_n|\ddot{a}_x$):** $_n|\ddot{a}_x = \frac{N_{x+n}}{D_x}$
+*   **n-Yıl Ertelemeli Peşin Anüite ($_n|\ddot{a}_x$):**
+    $$_n|\ddot{a}_x = \frac{N_{x+n}}{D_x}$$
 
 ### 4. Kohort Risk Simülasyonu (Monte Carlo)
 Deterministik formüllerin aksine, kohortun gelecekteki yaşam seyrindeki sapmaları (aktüeryal risk) ölçmek için **Monte Carlo Simülasyonu** entegre edilmiştir. Her bir birey için $x$ yaşından itibaren her yıl için $[0, 1]$ aralığında düzgün dağılımdan rastgele sayılar üretilir. Eğer üretilen sayı o yaştaki ölüm olasılığından ($q_x$) küçükse bireyin vefat ettiği varsayılır. Bu işlem tüm kohort için tekrarlanarak büyük sayılar kanunu (Law of Large Numbers) görselleştirilir.
