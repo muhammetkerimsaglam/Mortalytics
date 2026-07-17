@@ -93,36 +93,42 @@ class ActuarialEngine:
         self.df["Nx"] = self.df["Dx"].iloc[::-1].cumsum().iloc[::-1]
         return self.df
 
-    def calculate_single_premium_annuity(self, age: int, gender: str = "male", annuity_type: str = "due"):
+    def calculate_single_premium_annuity(self, age: int, gender: str = "male", annuity_type: str = "due", deferral_period: int = 0):
         """
         Ömür boyu anüite (tek primli emeklilik maaşı) değerini hesaplar.
-        
-        :param age: Bireyin yaşı (x)
-        :param gender: 'male' (erkek) veya 'female' (kadın)
-        :param annuity_type: 'due' (Dönem Başı) veya 'immediate' (Dönem Sonu)
         """
         df_comm = self.calculate_commutation_functions(gender)
         row = df_comm[df_comm["Age"] == age]
         if row.empty:
-            return 0.0
-
+            raise ValueError(f"Age {age} not found in mortality table.")
+            
         Dx = row["Dx"].values[0]
         Nx = row["Nx"].values[0]
-
+        
         if Dx == 0:
             return 0.0
-
+            
         if annuity_type == "due":
-            # Dönem Başı Ödemeli Anüite: äx = Nx / Dx
+            # Peşin Ödemeli Anüite: äx = Nx / Dx
             return Nx / Dx
+            
         elif annuity_type == "immediate":
-            # Dönem Sonu Ödemeli Anüite: ax = N_{x+1} / Dx
+            # Adi Ödemeli Anüite: ax = N_{x+1} / Dx
             next_row = df_comm[df_comm["Age"] == (age + 1)]
             if next_row.empty:
                 return 0.0
             Nx_plus_1 = next_row["Nx"].values[0]
             return Nx_plus_1 / Dx
-
+            
+        elif annuity_type == "deferred_due":
+            # Ertelemeli Peşin Ödemeli Anüite: n|äx = N_{x+n} / Dx
+            deferred_row = df_comm[df_comm["Age"] == (age + deferral_period)]
+            if deferred_row.empty:
+                return 0.0
+            Nx_plus_n = deferred_row["Nx"].values[0]
+            return Nx_plus_n / Dx
+            
+        return 0.0
 # ==============================================================================
 # 3. MONTE CARLO KOHORT SİMÜLATÖRÜ
 # ==============================================================================
@@ -232,16 +238,29 @@ cohort_size = st.sidebar.number_input("Başlangıç Kohort Sayısı (Kişi)", mi
 annuity_pay = st.sidebar.number_input("Yıllık Ödeme Tutarı (TL)", min_value=1000, value=100000, step=5000)
 
 annuity_type_input = st.sidebar.selectbox(
-    "Anüite Ödeme Tipi", 
-    ["Dönem Başı Ödemeli (Peşin - äx)", "Dönem Sonu Ödemeli (ax)"]
+    "Anüite Ödeme Tipi",
+    [
+        "Dönem Başı Ödemeli (Peşin - äx)", 
+        "Dönem Sonu Ödemeli (ax)", 
+        "Ertelemeli Dönem Başı Ödemeli (n|äx)"
+    ]
 )
-annuity_type = "due" if "Dönem Başı" in annuity_type_input else "immediate"
+
+# Erteleme süresini başlangıçta 0 tanımlayalım
+deferral_years = 0
+
+# Eğer ertelemeli seçildiyse kullanıcıdan yıl girdisi alalım
+if "Ertelemeli" in annuity_type_input:
+    annuity_type = "deferred_due"
+    deferral_years = st.sidebar.number_input("Erteleme Süresi (Yıl)", min_value=1, max_value=25, value=5, step=1)
+else:
+    annuity_type = "due" if "Dönem Başı" in annuity_type_input else "immediate"
 
 # Hesaplamaları ve Simülasyonu Tetikle
 trh_data = get_trh2010_data()
 engine = ActuarialEngine(trh_data, interest_rate)
-annuity_val = engine.calculate_single_premium_annuity(age, gender, annuity_type)
 
+annuity_val = engine.calculate_single_premium_annuity(age, gender, annuity_type, deferral_period=deferral_years)
 sim_results = run_cached_simulation(trh_data, age, gender, cohort_size)
 
 # Hesaplanan Değerler (Kart Tasarımları)
