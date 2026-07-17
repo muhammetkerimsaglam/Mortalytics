@@ -14,7 +14,11 @@ Bu proje; deterministik aktüeryal hesaplamaların gücünü, stokastik (rastsal
 *   **Monte Carlo Kohort Simülasyonu:** Geleneksel hesaplamaların ötesine geçerek, belirlenen büyüklükteki bir emekli grubunun her yıl maruz kaldığı ölüm olasılıklarına ($q_x$) göre "zar atarak" yıllar içindeki erimesini simüle eder.
 *   **Bilanço ve Karşılık Analizi:** Kişi başına gereken rezerv (BAP) ile tüm grubun şirkete getireceği **Portföy Toplam Rezerv Yükümlülüğünü** hesaplar.
 *   **Gelişmiş Görselleştirme:** Plotly alt yapısıyla hazırlanan çift eksenli grafik sayesinde aktif hayatta kalanlar ile yıllık vefat sayıları dinamik olarak izlenebilir.
-
+### 📊 Aktüeryal Anüite Modelleme Çeşitleri
+Motor, bireysel emeklilik ve hayat sigortacılığı matematiksel altyapısına uygun olarak üç temel anüite tipini dinamik komütasyon fonksiyonları üzerinden hesaplar:
+*   **Dönem Başı Ödemeli Peşin Anüite ($\ddot{a}_x$):** Ödemelerin her dönemin başında yapıldığı standart ömür boyu maaş modeli.
+*   **Dönem Sonu Ödemeli Adi Anüite ($a_x$):** Ödemelerin dönem sonlarında gerçekleştiği aktüeryal model.
+*   **Ertelemeli Dönem Başı Ödemeli Anüite ($_n|\ddot{a}_x$):** Belirlenen bir erteleme süresi ($postponement/deferral$) boyunca rezerv yükümlülüğü biriktiren ve süre sonunda aktif hale gelen gelişmiş aktüeryal model.
 ---
 
 ## 🛠️ Kullanılan Teknolojiler
