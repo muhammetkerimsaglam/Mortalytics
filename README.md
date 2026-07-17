@@ -120,6 +120,7 @@ pytest test_actuarial.py -v
 
 ---
 **Hazırlayan: MUHAMMET KERİM SAĞLAM**
-## 📄 Lisans
 
+
+##
 Bu proje eğitim/portfolyo amaçlı hazırlanmıştır.
