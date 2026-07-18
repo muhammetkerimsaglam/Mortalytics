@@ -36,6 +36,11 @@ hesaplamalarda kesinlikle kullanılmamalıdır.**
   - **Ödeme Zamanlaması:** Dönem Başı (Peşin - äx) · Dönem Sonu (ax)
 - **Monte Carlo kohort simülasyonu:** Binlerce bireyi yıl yıl simüle ederek
   hayatta kalan/vefat eden sayısını canlandırır (sabit seed ile tekrarlanabilir)
+- **Rezerv yeterliliği risk analizi:** Aynı kohortu N kez tekrar simüle
+  ederek gerçekleşen toplam ödeme maliyetinin dağılımını çıkarır; ayrılan
+  deterministik rezervin **yetersiz kalma olasılığını** ve %5–%95 aralığını
+  gösterir. Kohort büyüdükçe belirsizliğin (büyük sayılar kanunuyla) nasıl
+  daraldığını interaktif olarak gözlemleyebilirsiniz.
 - **Dinamik rezerv hesaplama:** Kişi başına ve portföy toplamına göre
   gereken aktüeryal rezerv
 - **İnteraktif Plotly grafiği:** Hayatta kalan sayısı ve yıllık vefat sayısı
@@ -59,6 +64,29 @@ hesaplamalarda kesinlikle kullanılmamalıdır.**
 eşitliği her zaman sağlanır. Bu özellik `test_actuarial.py` içinde
 otomatik olarak test edilir.
 
+### 🎲 Rezerv Yeterliliği Dağılımı (Monte Carlo Risk Analizi)
+
+Deterministik formüller (yukarıdaki tablo), rezervin **beklenen değerini**
+verir. Ama gerçekte bir kohort, tek bir rastgele gerçekleşme yaşar — bazı
+yıllarda beklenenden çok, bazı yıllarda az kişi vefat eder.
+
+Bunu görmek için aynı kohort, `run_reserve_distribution()` fonksiyonuyla
+**N kez** tekrar simüle edilir. Her tekrarda, o yıl hayatta olan kişi
+sayısı kadar ödeme yapıldığı varsayılıp iskonto edilerek **gerçekleşen
+toplam maliyet** hesaplanır:
+
+```
+Gerçekleşen Maliyet = Σₜ (Hayatta Kalan Sayısıₜ × Ödeme × vᵗ)
+```
+
+N tekrarın ortalaması, büyük sayılar kanunu gereği deterministik rezerve
+yakınsar (bu proje testlerinde ±%2 toleransla doğrulanmıştır). Dağılımın
+genişliği (standart sapma / değişim katsayısı), kohort büyüklüğüyle ters
+orantılı olarak daralır — yani **büyük portföyler, küçük portföylere göre
+göreceli olarak daha az risklidir** (havuzlama/pooling etkisi). Uygulama,
+bu ilişkiyi kohort sayısını değiştirerek interaktif şekilde göstermenizi
+sağlar.
+
 ---
 
 ## 📁 Proje Yapısı
@@ -70,7 +98,7 @@ Mortalytics/
 ├── actuarial_engine.py       # Geriye dönük uyumluluk için ince sarmalayıcı
 ├── trh2010_generator.py      # Geriye dönük uyumluluk için ince sarmalayıcı
 ├── main_test.py              # Notebook kökenli manuel inceleme/demo scripti
-├── test_actuarial.py         # pytest test paketi (13 test)
+├── test_actuarial.py         # pytest test paketi (17 test)
 ├── requirements.txt          # Python bağımlılıkları
 └── README.md
 ```
@@ -113,14 +141,14 @@ pytest test_actuarial.py -v
 
 ## 🔭 Yol Haritası (Planlanan Geliştirmeler)
 
+- [x] ~~Monte Carlo simülasyonu için çoklu-koşum dağılım/histogram grafiği (rezerv yeterliliği olasılığı)~~ ✅ Tamamlandı
+- [ ] Stokastik faiz oranı modellemesi (Vasicek/CIR) — sabit teknik faiz yerine zamanla dalgalanan faiz senaryoları
 - [ ] Gerçek/resmi TRH-2010 verisiyle sentetik modelin karşılaştırmalı gösterimi
-- [ ] Monte Carlo simülasyonu için çoklu-koşum dağılım/histogram grafiği (rezerv yeterliliği olasılığı)
 - [ ] PDF rapor çıktısı (seçilen parametreler + sonuçlar)
 - [ ] Joint-life (çoklu yaşam) anüite desteği
 
 ---
-**Hazırlayan: MUHAMMET KERİM SAĞLAM**
+**HAZIRLAYAN: MUHAMMET KERİM SAĞLAM**
 
 
-##
 Bu proje eğitim/portfolyo amaçlı hazırlanmıştır.
