@@ -190,6 +190,9 @@ pytest test_actuarial.py -v
 - [ ] Gerçek/resmi TRH-2010 verisiyle sentetik modelin karşılaştırmalı gösterimi
 - [ ] PDF rapor çıktısı (seçilen parametreler + sonuçlar)
 - [ ] Joint-life (çoklu yaşam) anüite desteği
+- [ ] `math_engine.py`'ı temel alan küçük bir Flask API oluşturup Render/Railway
+      üzerinde ayrıca yayınlamak — aynı hesaplama motorunun farklı bir arayüzle
+      sunulması, iş mantığı ile sunum katmanının ayrıldığını gösterir
 
 ---
 
