@@ -43,6 +43,11 @@ hesaplamalarda kesinlikle kullanılmamalıdır.**
   daraldığını interaktif olarak gözlemleyebilirsiniz.
 - **Dinamik rezerv hesaplama:** Kişi başına ve portföy toplamına göre
   gereken aktüeryal rezerv
+- **Stokastik faiz oranı modeli (CIR):** Sabit teknik faiz yerine, faiz
+  oranının zamanla rastgele dalgalandığı bir senaryo seçilebilir. Anüite
+  faktörü artık tek bir sayı değil, yüzlerce faiz senaryosu altında bir
+  **dağılım** olarak gösterilir; sabit faiz sonucuyla karşılaştırmalı
+  histogram ve %5–%95 aralığı sunulur.
 - **İnteraktif Plotly grafiği:** Hayatta kalan sayısı ve yıllık vefat sayısı
   aynı grafikte, çift eksenli olarak gösterilir
 
@@ -87,6 +92,45 @@ göreceli olarak daha az risklidir** (havuzlama/pooling etkisi). Uygulama,
 bu ilişkiyi kohort sayısını değiştirerek interaktif şekilde göstermenizi
 sağlar.
 
+### 📈 Stokastik Faiz Oranı Modeli (CIR)
+
+Yukarıdaki tüm hesaplamalar, teknik faiz oranının **sabit** kaldığı
+varsayımıyla yapılır. Gerçekte faiz oranları zamanla değişir. Bu belirsizliği
+modellemek için, sabit faiz yerine **CIR (Cox-Ingersoll-Ross)** kısa vadeli
+faiz modeli kullanılabilir:
+
+```
+dr = a(b − r)dt + σ√r dW
+```
+
+- **a** — ortalamaya dönüş hızı (faiz, ne kadar çabuk uzun vadeli seviyeye çekilir)
+- **b** — uzun vadeli ortalama faiz seviyesi (uygulamada, kullanıcının seçtiği sabit teknik faiz oranıyla aynı alınır)
+- **σ** — oynaklık
+
+**Neden Vasicek değil de CIR?** İki model de yapısal olarak birbirine
+benzer (ikisi de mean-reversion içerir), ama temel bir farkları var:
+Vasicek modelinde faiz oranı **negatif** değerler alabilir (matematiksel
+olarak engellenmez), CIR modelinde ise kareköklü terim (σ√r), faiz sıfıra
+yaklaştıkça oynaklığı da sıfıra yaklaştırır — bu da faizin **yapısal olarak
+negatife düşememesini** sağlar. Bu proje %0–%20 aralığında pozitif faiz
+oranlarıyla çalıştığından, negatif değer üretmeyen bir model tercih edilerek
+CIR seçilmiştir.
+
+**Önemli varsayımlar:**
+- `a=0,2` ve `σ=0,02` parametreleri, literatürde sık kullanılan **temsili**
+  değerlerdir — gerçek piyasa (örn. TCMB) verisiyle kalibre edilmemiştir.
+- Mortalite tarafı bilinçli olarak **deterministik** tutulmuştur (yaşam
+  tablosundaki hayatta kalma olasılıkları kullanılır); sadece iskonto
+  (faiz) tarafı stokastik hale getirilmiştir. Bu, faiz riskiyle mortalite
+  riskini ayrı ayrı incelemeyi mümkün kılar.
+- Sayısal simülasyon Euler-Maruyama yöntemiyle, "full truncation" tekniğiyle
+  yapılır (ayrıklaştırma hatasından doğabilecek negatif ara değerler sıfıra
+  kırpılır).
+
+**Tutarlılık kontrolü:** σ=0 verildiğinde faiz hiç dalgalanmaz ve bu modelin
+sonucu, deterministik formülle (Nx/Dx) hesaplanan sonuçla **birebir**
+örtüşmelidir. Bu, `test_actuarial.py` içinde otomatik olarak test edilir.
+
 ---
 
 ## 📁 Proje Yapısı
@@ -98,7 +142,7 @@ Mortalytics/
 ├── actuarial_engine.py       # Geriye dönük uyumluluk için ince sarmalayıcı
 ├── trh2010_generator.py      # Geriye dönük uyumluluk için ince sarmalayıcı
 ├── main_test.py              # Notebook kökenli manuel inceleme/demo scripti
-├── test_actuarial.py         # pytest test paketi (17 test)
+├── test_actuarial.py         # pytest test paketi (23 test)
 ├── requirements.txt          # Python bağımlılıkları
 └── README.md
 ```
@@ -142,13 +186,13 @@ pytest test_actuarial.py -v
 ## 🔭 Yol Haritası (Planlanan Geliştirmeler)
 
 - [x] ~~Monte Carlo simülasyonu için çoklu-koşum dağılım/histogram grafiği (rezerv yeterliliği olasılığı)~~ ✅ Tamamlandı
-- [ ] Stokastik faiz oranı modellemesi (Vasicek/CIR) — sabit teknik faiz yerine zamanla dalgalanan faiz senaryoları
+- [x] ~~Stokastik faiz oranı modellemesi (CIR) — sabit teknik faiz yerine zamanla dalgalanan faiz senaryoları~~ ✅ Tamamlandı
 - [ ] Gerçek/resmi TRH-2010 verisiyle sentetik modelin karşılaştırmalı gösterimi
 - [ ] PDF rapor çıktısı (seçilen parametreler + sonuçlar)
 - [ ] Joint-life (çoklu yaşam) anüite desteği
 
 ---
-**HAZIRLAYAN: MUHAMMET KERİM SAĞLAM**
 
+**HAZIRLAYAN: MUHAMMET KERİM SAĞLAM**
 
 Bu proje eğitim/portfolyo amaçlı hazırlanmıştır.
